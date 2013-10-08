@@ -9,7 +9,7 @@ import com.joffrey_bion.games.blackbox.model.Side;
 public class Main {
 
     public static void main(String[] args) {
-        int n = 5;//getNumberOfBalls();
+        int n = getNumberOfBalls();
         System.out.println("Starting " + n + "-ball game...");
         Grid grid = new Grid(n);
         System.out.println(grid);

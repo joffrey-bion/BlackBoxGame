@@ -2,6 +2,8 @@ package com.joffrey_bion.games.blackbox.model;
 
 public class EntryPort {
 
+    private static int detourCount = 0;
+    
     private Side side;
     private int index;
     private PortState state;
@@ -35,11 +37,17 @@ public class EntryPort {
         return state;
     }
 
-    void setTwin(EntryPort twin) {
+    void setDetourTo(EntryPort twin) {
         if (this.twin != null) {
             throw new RuntimeException("Twin already set.");
         }
         this.twin = twin;
+        this.state = PortState.DETOUR;
+        this.detourNumber = detourCount;
+        twin.twin = this;
+        twin.state = PortState.DETOUR;
+        twin.detourNumber = detourCount;
+        detourCount++;
     }
 
     public EntryPort getTwin() {
@@ -56,7 +64,7 @@ public class EntryPort {
         case REFLECT:
             return "R";
         case DETOUR:
-            return "D";
+            return Integer.toString(detourNumber);
         }
         return null;
     }

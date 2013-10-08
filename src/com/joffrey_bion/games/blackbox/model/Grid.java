@@ -140,10 +140,7 @@ public class Grid {
                 ep.setState(PortState.REFLECT);
                 return null;
             } else {
-                ep.setState(PortState.DETOUR);
-                dest.setState(PortState.DETOUR);
-                ep.setTwin(dest);
-                dest.setTwin(ep);
+                ep.setDetourTo(dest);
                 return dest;
             }
         }
