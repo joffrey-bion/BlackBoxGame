@@ -5,14 +5,20 @@ import java.util.Random;
 
 public class Grid {
 
-    private static final int SIZE = 8;
+    protected final int SIZE;
 
     private boolean[][] balls;
-    private HashMap<Side, EntryPort[]> entryPorts;
+    protected HashMap<Side, EntryPort[]> entryPorts;
 
-    public Grid(int nBalls) {
+    /**
+     * Creates a new empty {@code Grid}.
+     * 
+     * @param size
+     *            The size of the grid (length of one side).
+     */
+    public Grid(int size) {
+        SIZE = size;
         balls = new boolean[SIZE][SIZE];
-        randomizeBalls(nBalls);
         entryPorts = new HashMap<>();
         for (Side s : Side.values()) {
             EntryPort[] ports = new EntryPort[SIZE];
@@ -23,7 +29,16 @@ public class Grid {
         }
     }
 
-    private void randomizeBalls(int nBalls) {
+    /**
+     * Create a grid with {@code nBalls} balls placed randomly.
+     * 
+     * @param size
+     *            The size of the grid (length of one side).
+     * @param nBalls
+     *            Number of balls to generate.
+     */
+    public Grid(int size, int nBalls) {
+        this(size);
         Random rand = new Random();
         for (int k = 0; k < nBalls; k++) {
             int i = rand.nextInt(SIZE);
@@ -32,13 +47,33 @@ public class Grid {
         }
     }
 
-    public boolean isBall(int i, int j) {
+    /**
+     * Return whether there is a ball at the specified position. The position may be
+     * out of the grid bounds. In this case, {@code false} is returned.
+     * 
+     * @param i
+     *            The row number to check.
+     * @param j
+     *            The col number to check.
+     * @return {@code true} if a ball is at the specified position.
+     */
+    protected boolean isBall(int i, int j) {
         if (i < 0 || i >= SIZE || j < 0 || j >= SIZE) {
             return false;
         }
         return balls[i][j];
     }
 
+    /**
+     * Shoots a ray from the specified {@link Side}, at the specified position on
+     * this side.
+     * 
+     * @param side
+     *            The {@code Side} to shoot from.
+     * @param index
+     *            The index of the {@link EntryPort} on the specified {@code Side}.
+     * @return The {@code EntryPort} the ray has been shot from.
+     */
     public EntryPort shoot(Side side, int index) {
         EntryPort ep = entryPorts.get(side)[index];
         int i, j;
@@ -64,6 +99,21 @@ public class Grid {
         return ep;
     }
 
+    /**
+     * Propagates a ray in the specified {@link Direction}, from the specified
+     * position.
+     * 
+     * @param ep
+     *            The {@code EntryPort} the ray has been shot from.
+     * @param i
+     *            The current row.
+     * @param j
+     *            The current column.
+     * @param dir
+     *            The {@code Direction} to follow.
+     * @return The destination {@code EntryPort} (the twin) in case of a
+     *         {@link PortState#DETOUR}, {@code null} otherwise.
+     */
     private EntryPort propagateRay(EntryPort ep, int i, int j, Direction dir) {
         int iStraight = i, jStraight = j;
         int iFrontLeft = i, jFrontLeft = j;
@@ -147,10 +197,30 @@ public class Grid {
         return propagateRay(ep, iNext, jNext, dirNext);
     }
 
-    private static boolean isOnEdge(int i, int j) {
+    /**
+     * Returns whether the specified position in out of the grid, just on the edge.
+     * 
+     * @param i
+     *            The row to check.
+     * @param j
+     *            The column to check.
+     * @return {@code true} if the specified position in out of the grid, just on the
+     *         edge.
+     */
+    private boolean isOnEdge(int i, int j) {
         return i == -1 || i == SIZE || j == -1 || j == SIZE;
     }
 
+    /**
+     * Returns the {@link EntryPort} located at the specified position.
+     * 
+     * @param i
+     *            The row of the {@code EntryPort} to get.
+     * @param j
+     *            The column of the {@code EntryPort} to get.
+     * @return The {@code EntryPort} located at the specified position if this
+     *         position verifies {@link #isOnEdge(int, int)}, {@code null} otherwise.
+     */
     private EntryPort getEntryPort(int i, int j) {
         if (i == -1) {
             return entryPorts.get(Side.TOP)[j];
@@ -165,6 +235,15 @@ public class Grid {
         }
     }
 
+    /**
+     * Returns a {@code String} representation of the {@link EntryPort}s of the
+     * specified {@link Side}.
+     * 
+     * @param side
+     *            The {@code Side} of the {@code EntryPort}s to display.
+     * @return a {@code String} representation of the {@code EntryPort}s of the
+     *         specified {@code Side}.
+     */
     private String getEntryPortsStr(Side side) {
         EntryPort[] eps = entryPorts.get(side);
         StringBuilder sb = new StringBuilder();
@@ -174,8 +253,14 @@ public class Grid {
         return sb.toString();
     }
 
-    @Override
-    public String toString() {
+    /**
+     * Returns a {@code String} representation of this grid.
+     * 
+     * @param ballsToDisplay
+     *            The balls to display in the grid.
+     * @return a {@code String} representation of this grid.
+     */
+    protected String toString(boolean[][] ballsToDisplay) {
         StringBuilder sb = new StringBuilder();
         String newLine = System.getProperty("line.separator");
         EntryPort[] epLeft = entryPorts.get(Side.LEFT);
@@ -187,7 +272,7 @@ public class Grid {
             sb.append(epLeft[i].toString());
             sb.append("|");
             for (int j = 0; j < SIZE; j++) {
-                if (balls[i][j]) {
+                if (ballsToDisplay[i][j]) {
                     sb.append("O");
                 } else {
                     sb.append(" ");
@@ -201,5 +286,10 @@ public class Grid {
         sb.append(getEntryPortsStr(Side.BOTTOM));
         sb.append(newLine);
         return sb.toString();
+    }
+
+    @Override
+    public String toString() {
+        return toString(balls);
     }
 }
