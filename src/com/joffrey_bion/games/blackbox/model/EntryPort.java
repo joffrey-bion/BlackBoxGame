@@ -2,8 +2,6 @@ package com.joffrey_bion.games.blackbox.model;
 
 public class EntryPort {
 
-    private static int detourCount = 0;
-    
     private Side side;
     private int index;
     private PortState state;
@@ -26,10 +24,7 @@ public class EntryPort {
         return index;
     }
 
-    void setState(PortState state) {
-        if (this.state != PortState.UNKNOWN) {
-            throw new RuntimeException("Entry port state (" + side + "," + index + ") already set.");
-        }
+    public void setState(PortState state) {
         this.state = state;
     }
 
@@ -37,25 +32,31 @@ public class EntryPort {
         return state;
     }
 
-    void setDetourTo(EntryPort twin) {
+    public void setTwin(EntryPort twin) {
+        this.twin = twin;
+    }
+
+    void setDetourTo(EntryPort twin, int detourNumber) {
         if (this.twin != null) {
             throw new RuntimeException("Twin already set.");
         }
         this.twin = twin;
         this.state = PortState.DETOUR;
-        this.detourNumber = detourCount;
+        this.detourNumber = detourNumber;
         twin.twin = this;
         twin.state = PortState.DETOUR;
-        twin.detourNumber = detourCount;
-        detourCount++;
+        twin.detourNumber = detourNumber;
     }
 
-    public EntryPort getTwin() {
-        return twin;
+    public boolean equals(EntryPort ep) {
+        boolean equals = side == ep.side && index == ep.index && state == ep.state;
+        if (equals && state == PortState.DETOUR) {
+            return twin.side == ep.twin.side && twin.index == ep.twin.index;
+        }
+        return equals;
     }
 
-    @Override
-    public String toString() {
+    public String stateToString() {
         switch (state) {
         case UNKNOWN:
             return " ";
@@ -67,5 +68,15 @@ public class EntryPort {
             return Integer.toString(detourNumber);
         }
         return null;
+    }
+
+    public String positionToString() {
+        return side + "-" + index;
+    }
+
+    @Override
+    public String toString() {
+        return positionToString() + " (" + state + (twin == null ? "" : " to " + twin.positionToString())
+                + ")";
     }
 }

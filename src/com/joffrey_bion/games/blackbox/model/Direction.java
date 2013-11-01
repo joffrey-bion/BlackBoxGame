@@ -1,6 +1,6 @@
 package com.joffrey_bion.games.blackbox.model;
 
-public enum Direction {
+enum Direction {
     UP,
     RIGHT,
     DOWN,

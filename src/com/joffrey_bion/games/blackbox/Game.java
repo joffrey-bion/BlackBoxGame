@@ -2,7 +2,7 @@ package com.joffrey_bion.games.blackbox;
 
 import java.util.Scanner;
 
-import com.joffrey_bion.games.blackbox.model.Grid;
+import com.joffrey_bion.games.blackbox.ai.Solver;
 import com.joffrey_bion.games.blackbox.model.GuessableGrid;
 import com.joffrey_bion.games.blackbox.model.Side;
 
@@ -21,13 +21,23 @@ public class Game {
     public static void main(String[] args) {
         int size = 8;
         System.out.println("Starting " + size + "-sized game...");
-        new Game(size).play();
+        Game game = new Game(size);
+        //game.solve();
+        while (game.play());
     }
     
-    private void play() {
+    @SuppressWarnings("unused")
+    private void solve() {
+        nBalls = getNumberOfBalls();
+        grid = new GuessableGrid(size, nBalls);
+        new Solver(grid).solve();
+    }
+    
+    private boolean play() {
         nBalls = getNumberOfBalls();
         grid = new GuessableGrid(size, nBalls);
         while (true) {
+            System.out.println("Current state of the entry ports and guesses:");
             System.out.println(grid);
             System.out.println("What would you like to do?");
             System.out.println("  0 - shoot a ray");
@@ -45,21 +55,8 @@ public class Game {
             }
             System.out.println();
         }
-    }
-
-    private void someShots(Grid grid) {
-        grid.shoot(Side.TOP, 2);
-        System.out.println(grid);
-        grid.shoot(Side.TOP, 5);
-        System.out.println(grid);
-        grid.shoot(Side.LEFT, 0);
-        System.out.println(grid);
-        grid.shoot(Side.RIGHT, 2);
-        System.out.println(grid);
-        grid.shoot(Side.RIGHT, 5);
-        System.out.println(grid);
-        grid.shoot(Side.BOTTOM, 3);
-        System.out.println(grid);
+        System.out.println("Play again? (Y/N)");
+        return getYesNo();
     }
 
     private int getNumberOfBalls() {
@@ -97,7 +94,7 @@ public class Game {
         while (sc.hasNext()) {
             String sideStr = sc.next();
             try {
-                side = Side.valueOf(sideStr);
+                side = Side.valueOf(sideStr.toUpperCase());
                 break;
             } catch (IllegalArgumentException e) {
                 System.err.println("TOP, BOTTOM, LEFT or RIGHT expected.");
@@ -128,5 +125,19 @@ public class Game {
             }
         }
         return i;
+    }
+    
+    private boolean getYesNo() {
+        while (sc.hasNext()) {
+            String s = sc.next();
+            if (s.equalsIgnoreCase("Y")) {
+                return true;
+            } else if (s.equalsIgnoreCase("N")) {
+                return false;
+            } else {
+                System.out.println("Please enter Y or N.");
+            }
+        }
+        throw new RuntimeException("Unexpected end of input for a yes/no question.");
     }
 }

@@ -3,22 +3,24 @@ package com.joffrey_bion.games.blackbox.model;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.joffrey_bion.utils.strings.BoxDrawing;
+
 public class Grid {
 
     protected final int SIZE;
-
-    private boolean[][] balls;
+    protected BallList balls;
     protected HashMap<Side, EntryPort[]> entryPorts;
-
+    private int detourCount = 0;
+    
     /**
      * Creates a new empty {@code Grid}.
      * 
      * @param size
      *            The size of the grid (length of one side).
      */
-    public Grid(int size) {
+    private Grid(int size) {
         SIZE = size;
-        balls = new boolean[SIZE][SIZE];
+        balls = new BallList();
         entryPorts = new HashMap<>();
         for (Side s : Side.values()) {
             EntryPort[] ports = new EntryPort[SIZE];
@@ -27,6 +29,19 @@ public class Grid {
             }
             entryPorts.put(s, ports);
         }
+    }
+
+    /**
+     * Create a grid with the specified balls.
+     * 
+     * @param size
+     *            The size of the grid (length of one side).
+     * @param balls
+     *            The balls to place in this {@code Grid}.
+     */
+    public Grid(int size, BallList balls) {
+        this(size);
+        this.balls = balls;
     }
 
     /**
@@ -41,10 +56,16 @@ public class Grid {
         this(size);
         Random rand = new Random();
         for (int k = 0; k < nBalls; k++) {
-            int i = rand.nextInt(SIZE);
-            int j = rand.nextInt(SIZE);
-            balls[i][j] = true;
+            balls.add(rand.nextInt(SIZE), rand.nextInt(SIZE));
         }
+    }
+
+    public int getSize() {
+        return SIZE;
+    }
+
+    public int getNBalls() {
+        return balls.size();
     }
 
     /**
@@ -58,10 +79,19 @@ public class Grid {
      * @return {@code true} if a ball is at the specified position.
      */
     protected boolean isBall(int i, int j) {
-        if (i < 0 || i >= SIZE || j < 0 || j >= SIZE) {
-            return false;
+        return balls.contains(i, j);
+    }
+
+    /**
+     * Shoots a ray from every {@link EntryPort}. After a call to this method, no
+     * {@code EntryPort} can be in the {@link PortState#UNKNOWN} state .
+     */
+    public void shootAll() {
+        for (Side s : Side.values()) {
+            for (int i = 0; i < SIZE; i++) {
+                shoot(s, i);
+            }
         }
-        return balls[i][j];
     }
 
     /**
@@ -72,10 +102,14 @@ public class Grid {
      *            The {@code Side} to shoot from.
      * @param index
      *            The index of the {@link EntryPort} on the specified {@code Side}.
-     * @return The {@code EntryPort} the ray has been shot from.
+     * @return {@code true} if the entry port had never been tried, {@code false}
+     *         otherwise. If {@code false} is returned, nothing has been done.
      */
-    public EntryPort shoot(Side side, int index) {
+    public boolean shoot(Side side, int index) {
         EntryPort ep = entryPorts.get(side)[index];
+        if (ep.getState() != PortState.UNKNOWN) {
+            return false;
+        }
         int i, j;
         switch (side) {
         case TOP:
@@ -96,7 +130,7 @@ public class Grid {
             j = SIZE;
         }
         propagateRay(ep, i, j, side.getDirection());
-        return ep;
+        return true;
     }
 
     /**
@@ -190,7 +224,8 @@ public class Grid {
                 ep.setState(PortState.REFLECT);
                 return null;
             } else {
-                ep.setDetourTo(dest);
+                ep.setDetourTo(dest, detourCount);
+                detourCount++;
                 return dest;
             }
         }
@@ -209,6 +244,19 @@ public class Grid {
      */
     private boolean isOnEdge(int i, int j) {
         return i == -1 || i == SIZE || j == -1 || j == SIZE;
+    }
+
+    /**
+     * Returns the {@link EntryPort} located at the specified position.
+     * 
+     * @param side
+     *            The {@link Side} of the {@code EntryPort} to get.
+     * @param index
+     *            The index of the {@code EntryPort} to get.
+     * @return The {@code EntryPort} located at the specified position.
+     */
+    public EntryPort getEntryPort(Side side, int index) {
+        return entryPorts.get(side)[index];
     }
 
     /**
@@ -248,11 +296,11 @@ public class Grid {
         EntryPort[] eps = entryPorts.get(side);
         StringBuilder sb = new StringBuilder();
         for (EntryPort ep : eps) {
-            sb.append(ep.toString());
+            sb.append(ep.stateToString());
         }
         return sb.toString();
     }
-
+    
     /**
      * Returns a {@code String} representation of this grid.
      * 
@@ -260,26 +308,26 @@ public class Grid {
      *            The balls to display in the grid.
      * @return a {@code String} representation of this grid.
      */
-    protected String toString(boolean[][] ballsToDisplay) {
+    protected String toString(BallList ballsToDisplay) {
         StringBuilder sb = new StringBuilder();
-        String newLine = System.getProperty("line.separator");
+        String newLine = BoxDrawing.NEW_LINE;
         EntryPort[] epLeft = entryPorts.get(Side.LEFT);
         EntryPort[] epRight = entryPorts.get(Side.RIGHT);
         sb.append("  ");
         sb.append(getEntryPortsStr(Side.TOP));
         sb.append(newLine);
         for (int i = 0; i < SIZE; i++) {
-            sb.append(epLeft[i].toString());
-            sb.append("|");
+            sb.append(epLeft[i].stateToString());
+            sb.append(BoxDrawing.LIGHT_VERTICAL);
             for (int j = 0; j < SIZE; j++) {
-                if (ballsToDisplay[i][j]) {
+                if (balls.contains(i, j)) {
                     sb.append("O");
                 } else {
                     sb.append(" ");
                 }
             }
-            sb.append("|");
-            sb.append(epRight[i].toString());
+            sb.append(BoxDrawing.LIGHT_VERTICAL);
+            sb.append(epRight[i].stateToString());
             sb.append(newLine);
         }
         sb.append("  ");
