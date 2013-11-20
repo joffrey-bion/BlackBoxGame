@@ -34,7 +34,7 @@ class PossibleGridList extends LinkedList<Grid> {
         System.out.println(" Done.");
 
         // create all possible sets of nBalls balls
-        System.out.print("Generating " + nBalls + "-long balls lists...");
+        System.out.print("Generating " + nBalls + "-ball lists...");
         LinkedList<BallList> lists = generateBallsLists(allBalls, new BallList(), nBalls);
         final int total = lists.size();
         System.out.println(" Done.");
@@ -57,7 +57,7 @@ class PossibleGridList extends LinkedList<Grid> {
     }
 
     /**
-     * Generates all possible lists of {@code size} {@link Ball}s. The balls are
+     * Generates all possible lists of {@code nb} {@link Ball}s. The balls are
      * chosen among the specified {@code set}, but can't be chosen if they are in the
      * {@code exceptions} set.
      * 

@@ -4,6 +4,7 @@ import com.jbion.games.blackbox.ai.SolvingAssistant;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.Side;
 import com.jbion.games.blackbox.model.ports.Ports;
+import com.jbion.games.blackbox.model.ports.State;
 
 public class HumanAssistant {
 
@@ -38,19 +39,23 @@ public class HumanAssistant {
     }
 
     private void updateState(int port) {
-        System.out.println("What is the result?");
-        System.out.println("  0 - HIT");
-        System.out.println("  1 - REFLECT");
-        System.out.println("  2 - DETOUR");
-        System.out.print("Result: ");
-        int choice = io.getIntegerBetween(0, 2);
-        if (choice == 0) {
+        System.out.print("What is the result (HIT, REFLECT, DETOUR)? ");
+        State state = io.getState();
+        switch (state) {
+        case HIT:
             helper.setHit(port);
-        } else if (choice == 1) {
+            break;
+        case REFLECT:
             helper.setReflect(port);
-        } else {
+            break;
+        case DETOUR:
             int twin = getTwin();
             helper.setDetour(port, twin);
+            break;
+        case UNKNOWN:
+        default:
+            throw new RuntimeException(
+                    "INTERNAL ERROR: The state of the port must be known at this point.");
         }
         System.out.println();
     }
@@ -59,7 +64,7 @@ public class HumanAssistant {
         System.out.println("Please enter the port where the detour ended:");
         System.out.print("Side (TOP, BOTTOM, LEFT, RIGHT): ");
         Side side = io.getSide();
-        System.out.print("Index (0-" + Grid.size + ": ");
+        System.out.print("Index (0-" + (Grid.size - 1) + "): ");
         int index = io.getIndex(side);
         return Ports.getPortNum(side, index);
     }

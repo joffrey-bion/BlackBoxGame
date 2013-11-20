@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.Side;
+import com.jbion.games.blackbox.model.ports.State;
 
 public class IOHelper {
 
@@ -30,6 +31,23 @@ public class IOHelper {
             }
         }
         return side;
+    }
+
+    public State getState() {
+        State state = null;
+        while (sc.hasNext()) {
+            String stateStr = sc.next();
+            try {
+                if (stateStr.equalsIgnoreCase("UNKNOWN")) {
+                    throw new IllegalArgumentException();
+                }
+                state = State.valueOf(stateStr.toUpperCase());
+                break;
+            } catch (IllegalArgumentException e) {
+                System.err.println("HIT, REFLECT or DETOUR expected.");
+            }
+        }
+        return state;
     }
 
     public int getIndex(Side side) {

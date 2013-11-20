@@ -112,13 +112,16 @@ public class SolvingAssistant {
      * @return the best port to try in the current situation.
      */
     public int chooseEntryPort() {
+        System.out.println("Looking for the best port to test...");
         TreeMap<Double, Integer> eps = new TreeMap<>();
-        for (int port = 0; port < Grid.size * 4; port++) {
+        for (int port = 0; port < Ports.size(); port++) {
             if (testPorts.getState(port) != State.UNKNOWN) {
                 continue;
             }
             eps.put(getAvgRemainingGrids(port), port);
+            System.out.print(".");
         }
+        System.out.println("Done.");
         if (eps.size() > 0) {
             return eps.get(eps.firstKey());
         } else {
@@ -153,9 +156,7 @@ public class SolvingAssistant {
             nRemainingGrids.add(nbGrids);
             testPorts.resetState(port);
         }
-        double stat = weigthedAverage(nRemainingGrids);
-        System.out.println(port + " avg rem = " + stat);
-        return stat;
+        return weigthedAverage(nRemainingGrids);
     }
 
     /**
