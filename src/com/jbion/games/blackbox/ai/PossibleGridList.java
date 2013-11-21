@@ -6,8 +6,8 @@ import com.jbion.games.blackbox.model.Ball;
 import com.jbion.games.blackbox.model.BallList;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.ports.Ports;
-import com.jbion.utils.strings.BoxChars;
-import com.jbion.utils.strings.GridDrawer;
+import com.jbion.utils.grids.BoxChars;
+import com.jbion.utils.grids.GridDrawer;
 
 /**
  * A list that contains all possible grids. This class provides operations to filter
