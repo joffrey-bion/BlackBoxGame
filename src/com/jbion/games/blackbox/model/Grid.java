@@ -5,8 +5,9 @@ import java.util.Random;
 import com.jbion.games.blackbox.model.ports.Ports;
 import com.jbion.games.blackbox.model.ports.State;
 import com.jbion.games.blackbox.model.propagation.Propagator;
-import com.jbion.utils.grids.BoxChars;
-import com.jbion.utils.grids.GridDrawer;
+import com.jbion.utils.drawing.Drawing;
+import com.jbion.utils.drawing.blocks.BlockChars;
+import com.jbion.utils.drawing.grids.BoxChars;
 
 /**
  * Represents a grid of the BlackBox game.
@@ -147,8 +148,8 @@ public class Grid {
         return shoot(side, index);
     }
 
-    private static final String BALL = " " + BoxChars.BLACK_CIRCLE;
-    private static final String SPACE = " " + BoxChars.MIDDLE_DOT;
+    private static final String BALL = " " + BlockChars.BLACK_CIRCLE;
+    private static final String SPACE = " " + Drawing.MIDDLE_DOT;
 
     private static final char H = BoxChars.BOX_DRAWINGS_LIGHT_HORIZONTAL;
     private static final char HD = H;
@@ -189,14 +190,14 @@ public class Grid {
      */
     protected String toString(BallList ballsToDisplay) {
         StringBuilder sb = new StringBuilder();
-        String newLine = BoxChars.NEW_LINE;
-        sb.append(GridDrawer.repeat(H, size, 2, "", "   " + ULC, URC));
+        String newLine = Drawing.NEW_LINE;
+        sb.append(Drawing.repeat(H, size, 2, "", "   " + ULC, URC));
         sb.append(newLine);
         sb.append("   ");
         sb.append(getEntryPortsStr(Side.TOP));
         sb.append(newLine);
-        sb.append(GridDrawer.repeat(HD, size, 2, "", ULC + GridDrawer.repeat(H, 2) + CROSS, CROSS
-                + GridDrawer.repeat(H, 2) + URC));
+        sb.append(Drawing.repeat(HD, size, 2, "", ULC + Drawing.repeat(H, 2) + CROSS, CROSS
+                + Drawing.repeat(H, 2) + URC));
         sb.append(newLine);
         for (int i = 0; i < size; i++) {
             sb.append(V);
@@ -216,13 +217,13 @@ public class Grid {
             sb.append(V);
             sb.append(newLine);
         }
-        sb.append(GridDrawer.repeat(HD, size, 2, "", DLC + GridDrawer.repeat(H, 2) + CROSS, CROSS
-                + GridDrawer.repeat(H, 2) + DRC));
+        sb.append(Drawing.repeat(HD, size, 2, "", DLC + Drawing.repeat(H, 2) + CROSS, CROSS
+                + Drawing.repeat(H, 2) + DRC));
         sb.append(newLine);
         sb.append("   ");
         sb.append(getEntryPortsStr(Side.BOTTOM));
         sb.append(newLine);
-        sb.append(GridDrawer.repeat(H, size, 2, "", "   " + DLC, DRC));
+        sb.append(Drawing.repeat(H, size, 2, "", "   " + DLC, DRC));
         sb.append(newLine);
         return sb.toString();
     }

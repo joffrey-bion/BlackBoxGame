@@ -6,8 +6,8 @@ import com.jbion.games.blackbox.model.Ball;
 import com.jbion.games.blackbox.model.BallList;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.ports.Ports;
-import com.jbion.utils.grids.BoxChars;
-import com.jbion.utils.grids.GridDrawer;
+import com.jbion.utils.progress.AbstractProgressBar;
+import com.jbion.utils.progress.OneTimeProgressBar;
 
 /**
  * A list that contains all possible grids. This class provides operations to filter
@@ -17,8 +17,6 @@ import com.jbion.utils.grids.GridDrawer;
  * @author <a href="mailto:joffrey.bion@gmail.com">Joffrey Bion</a>
  */
 class PossibleGridList extends LinkedList<Grid> {
-
-    private static final boolean FULL_PROGRESS_BAR = false;
 
     /**
      * Creates a new {@code PossibleGridList} containing all possible grids for the
@@ -41,18 +39,16 @@ class PossibleGridList extends LinkedList<Grid> {
         System.out.println("There are " + lists.size() + " possible grids.");
 
         System.out.println("Generating all possible grids...");
-        if (!FULL_PROGRESS_BAR) {
-            System.out.println(BoxChars.BOX_DRAWINGS_LIGHT_DOWN_AND_RIGHT
-                    + GridDrawer.repeat(BoxChars.BOX_DRAWINGS_LIGHT_HORIZONTAL, 50)
-                    + BoxChars.BOX_DRAWINGS_LIGHT_DOWN_AND_LEFT);
-            System.out.print(BoxChars.BOX_DRAWINGS_VERTICAL_SINGLE_AND_RIGHT_DOUBLE);
-        }
+        AbstractProgressBar progress;
+        progress = new OneTimeProgressBar(total, 60);
+        progress.begin();
         for (BallList list : lists) {
             Grid grid = new Grid(list);
             add(grid);
             grid.shootAll();
-            displayProgress(size(), total);
+            progress.printProgress(size());
         }
+        progress.end();
         System.out.println();
     }
 
@@ -133,31 +129,5 @@ class PossibleGridList extends LinkedList<Grid> {
             }
         }
         return consistent;
-    }
-
-    private static void displayProgress(int count, int total) {
-        if (count == total || count % (total / 50) == 0) {
-            if (FULL_PROGRESS_BAR) {
-                int percent = count * 50 / total;
-                System.out.print(String.format("% 4d", percent * 2) + "% ");
-                System.out.print(BoxChars.BOX_DRAWINGS_VERTICAL_SINGLE_AND_RIGHT_DOUBLE);
-                for (int i = 0; i < 50; i++) {
-                    if (i < percent) {
-                        System.out.print(BoxChars.BOX_DRAWINGS_DOUBLE_HORIZONTAL);
-                    } else if (i == percent) {
-                        System.out.print(">");
-                    } else {
-                        System.out.print(" ");
-                    }
-                }
-                System.out.println("]");
-            } else {
-                if (count == total) {
-                    System.out.print(BoxChars.BOX_DRAWINGS_VERTICAL_SINGLE_AND_LEFT_DOUBLE);
-                } else {
-                    System.out.print(BoxChars.BOX_DRAWINGS_DOUBLE_HORIZONTAL);
-                }
-            }
-        }
     }
 }

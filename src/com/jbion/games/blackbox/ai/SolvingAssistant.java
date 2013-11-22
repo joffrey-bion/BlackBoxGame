@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.ports.Ports;
 import com.jbion.games.blackbox.model.ports.State;
+import com.jbion.utils.progress.OneTimeProgressBar;
 
 /**
  * A helper that contains useful methods to keep track of the state of a BlackBox
@@ -114,14 +115,16 @@ public class SolvingAssistant {
     public int chooseEntryPort() {
         System.out.println("Looking for the best port to test...");
         TreeMap<Double, Integer> eps = new TreeMap<>();
+        OneTimeProgressBar progress = new OneTimeProgressBar(Ports.size(), 50);
+        progress.begin();
         for (int port = 0; port < Ports.size(); port++) {
             if (testPorts.getState(port) != State.UNKNOWN) {
                 continue;
             }
             eps.put(getAvgRemainingGrids(port), port);
-            System.out.print(".");
+            progress.printProgress(port + 1);
         }
-        System.out.println("Done.");
+        progress.end();
         if (eps.size() > 0) {
             return eps.get(eps.firstKey());
         } else {
