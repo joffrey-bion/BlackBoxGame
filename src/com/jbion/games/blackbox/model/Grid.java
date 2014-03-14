@@ -5,9 +5,9 @@ import java.util.Random;
 import com.jbion.games.blackbox.model.ports.Ports;
 import com.jbion.games.blackbox.model.ports.State;
 import com.jbion.games.blackbox.model.propagation.Propagator;
-import com.jbion.utils.drawing.Drawing;
-import com.jbion.utils.drawing.blocks.BlockChars;
-import com.jbion.utils.drawing.grids.BoxChars;
+import com.jbion.utils.console.drawing.Drawing;
+import com.jbion.utils.console.drawing.blocks.BlockChars;
+import com.jbion.utils.console.drawing.grids.BoxChars;
 
 /**
  * Represents a grid of the BlackBox game.

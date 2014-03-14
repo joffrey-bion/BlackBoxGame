@@ -6,8 +6,8 @@ import com.jbion.games.blackbox.model.Ball;
 import com.jbion.games.blackbox.model.BallList;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.ports.Ports;
-import com.jbion.utils.progress.AbstractProgressBar;
-import com.jbion.utils.progress.OneTimeProgressBar;
+import com.jbion.utils.console.drawing.progress.AbstractProgressBar;
+import com.jbion.utils.console.drawing.progress.OneTimeProgressBar;
 
 /**
  * A list that contains all possible grids. This class provides operations to filter

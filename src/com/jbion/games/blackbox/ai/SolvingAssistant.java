@@ -7,7 +7,7 @@ import java.util.TreeMap;
 import com.jbion.games.blackbox.model.Grid;
 import com.jbion.games.blackbox.model.ports.Ports;
 import com.jbion.games.blackbox.model.ports.State;
-import com.jbion.utils.progress.OneTimeProgressBar;
+import com.jbion.utils.console.drawing.progress.OneTimeProgressBar;
 
 /**
  * A helper that contains useful methods to keep track of the state of a BlackBox
