@@ -55,7 +55,7 @@ artifacts {
 bintrayUpload.dependsOn tasks.launch4j
 
 bintray {
-    user = project.bintrayUsername // taken from gradle.properties
+    user = project.bintrayUser // taken from gradle.properties
     key = project.bintrayApiKey // taken from gradle.properties
     configurations = ['archives']
 
