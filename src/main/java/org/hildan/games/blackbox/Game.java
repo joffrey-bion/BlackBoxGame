@@ -71,7 +71,7 @@ public class Game {
         Side side = io.getSide();
         System.out.print("Enter the index you want to shoot from on side '" + side + "' (0 to "
                 + (Grid.size - 1) + "): ");
-        int index = io.getIndex(side);
+        int index = io.getIndex();
         grid.shoot(side, index);
     }
 }

@@ -65,7 +65,7 @@ public class HumanAssistant {
         System.out.print("Side (TOP, BOTTOM, LEFT, RIGHT): ");
         Side side = io.getSide();
         System.out.print("Index (0-" + (Grid.size - 1) + "): ");
-        int index = io.getIndex(side);
+        int index = io.getIndex();
         return Ports.getPortNum(side, index);
     }
 }

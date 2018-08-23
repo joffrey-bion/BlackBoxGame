@@ -50,7 +50,7 @@ public class IOHelper {
         return state;
     }
 
-    public int getIndex(Side side) {
+    public int getIndex() {
         return getIntegerBetween(0, Grid.size - 1);
     }
 
